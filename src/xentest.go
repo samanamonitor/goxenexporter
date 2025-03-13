@@ -6,6 +6,7 @@ import (
 
 	"xenapi"
 	"log"
+	"encoding/json"
 )
 
 var HOST_FLAG = flag.String("host", "127.0.0.1", "the Host of the form ip[:port] pointing at the server")
@@ -24,15 +25,15 @@ var PASSWORD1_FLAG = flag.String("password1", "", "the password of the host1")
 
 type SammXen struct {
 	verifySsl bool
-	session *xenapi.Session
+	Session *xenapi.Session
 	sessionRef xenapi.SessionRef
-	sessionRec xenapi.SessionRecord
+	SessionRec xenapi.SessionRecord
 }
 
 func NewSammXen(host string, user string, password string, verifySsl bool) (*SammXen, error) {
 	x := &SammXen{
 		verifySsl: verifySsl,
-		session: xenapi.NewSession(&xenapi.ClientOpts{
+		Session: xenapi.NewSession(&xenapi.ClientOpts{
 			URL: "https://" + host,
 			Headers: map[string]string{
 				"User-Agent": "SAMM exporter v2.0",
@@ -40,11 +41,11 @@ func NewSammXen(host string, user string, password string, verifySsl bool) (*Sam
 		}),
 	}
 	var err error
-	x.sessionRef, err = x.session.LoginWithPassword(user, password, "1.0", "Samm exporter v2.0")
+	x.sessionRef, err = x.Session.LoginWithPassword(user, password, "1.0", "Samm exporter v2.0")
 	if err != nil {
 		return nil, err
 	}
-	x.sessionRec, err = x.session.GetRecord(x.sessionRef)
+	x.SessionRec, err = x.Session.GetRecord(x.sessionRef)
 	if err != nil {
 		return nil, err
 	}
@@ -52,13 +53,25 @@ func NewSammXen(host string, user string, password string, verifySsl bool) (*Sam
 }
 
 func (self SammXen) SessionId() (string) {
-	return self.sessionRec.UUID
+	return self.SessionRec.UUID
+}
+
+func (self SammXen) GetUpdatesRrd(hostUuid string) ([]byte, error) {
+	//var host xenapi.HostRef
+	//host, err = xenapi.Host.GetByUUID(self.sessionRef, hostUuid)
+	return json.Marshal([]string{})
 }
 
 var session *xenapi.Session
 
 func main() {
 	flag.Parse()
+	x, err := NewSammXen(*HOST_FLAG, *USERNAME_FLAG, *PASSWORD_FLAG, false)
+	if err != nil {
+		panic(err)
+		return
+	}
+	/*
 	session = xenapi.NewSession(&xenapi.ClientOpts{
 		URL: "http://" + *HOST_FLAG,
 		Headers: map[string]string{
@@ -73,9 +86,11 @@ func main() {
 	log.Print("api version: ", session.APIVersion)
 	log.Print("xapi rpm version: ", session.XAPIVersion)
 	rec, _ := session.GetRecord(session_id)
-	log.Printf("%s\n", rec.UUID)
+	*/
+	log.Printf("%s\n", x.SessionId())
+	log.Printf("%v\n", x.SessionRec)
 
-	if err := session.Logout(); err != nil {
+	if err := x.Session.Logout(); err != nil {
 		log.Print(err)
 	}
 	os.Exit(0)
