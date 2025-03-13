@@ -25,7 +25,8 @@ var PASSWORD1_FLAG = flag.String("password1", "", "the password of the host1")
 type SammXen struct {
 	verifySsl bool
 	session *xenapi.Session
-	sessionId string
+	sessionRef xenapi.SessionRef
+	sessionRec xenapi.SessionRecord
 }
 
 func NewSammXen(host string, user string, password string, verifySsl bool) (*SammXen, error) {
@@ -38,10 +39,20 @@ func NewSammXen(host string, user string, password string, verifySsl bool) (*Sam
 			},
 		}),
 	}
-	if _, err := x.session.LoginWithPassword(user, password, "1.0", "Samm exporter v2.0"); err != nil {
+	var err error
+	x.sessionRef, err = x.session.LoginWithPassword(user, password, "1.0", "Samm exporter v2.0")
+	if err != nil {
+		return nil, err
+	}
+	x.sessionRec, err = x.session.GetRecord(x.sessionRef)
+	if err != nil {
 		return nil, err
 	}
 	return x, nil
+}
+
+func (self SammXen) SessionId() (string) {
+	return self.sessionRec.UUID
 }
 
 var session *xenapi.Session
