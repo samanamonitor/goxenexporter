@@ -88,7 +88,7 @@ func main() {
 	rec, _ := session.GetRecord(session_id)
 	*/
 	log.Printf("%s\n", x.SessionId())
-	host, nerr := xenapi.Host.GetRecord(x.sessionRef, x.sessionRec.ThisHost)
+	host, nerr := xenapi.Host.GetRecord(x.Session, x.SessionRec.ThisHost)
 	if nerr != nil {
 		panic(nerr)
 		return
