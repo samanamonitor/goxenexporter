@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"os"
+	"fmt"
 
 	"xenapi"
 	"log"
@@ -98,7 +99,7 @@ func main() {
 		if err != nil {
 			log.Print(err)
 		} else {
-			Printf("%s\n", host.UUID)
+			fmt.Printf("%s\n", host.UUID)
 		}
 	}
 
