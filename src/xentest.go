@@ -54,13 +54,14 @@ func main() {
 			"User-Agent": "XS SDK for Go - Examples v1.0",
 		},
 	})
-	if _, err := session.LoginWithPassword(*USERNAME_FLAG, *PASSWORD_FLAG, "1.0", "Go sdk samples"); err != nil {
+	session_id , err := session.LoginWithPassword(*USERNAME_FLAG, *PASSWORD_FLAG, "1.0", "Go sdk samples")
+	if err != nil {
 		panic(err)
 		return
 	}
 	log.Print("api version: ", session.APIVersion)
 	log.Print("xapi rpm version: ", session.XAPIVersion)
-	_, rec := session.GetRecord(session)
+	_, rec := session.GetRecord(session_id)
 	log.Printf("%v\n", rec)
 
 	if err := session.Logout(); err != nil {
