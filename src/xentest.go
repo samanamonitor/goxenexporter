@@ -61,7 +61,7 @@ func main() {
 	}
 	log.Print("api version: ", session.APIVersion)
 	log.Print("xapi rpm version: ", session.XAPIVersion)
-	_, rec := session.GetRecord(session_id)
+	rec, _ := session.GetRecord(session_id)
 	log.Printf("%v\n", rec)
 
 	if err := session.Logout(); err != nil {
