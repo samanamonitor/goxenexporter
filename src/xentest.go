@@ -88,7 +88,12 @@ func main() {
 	rec, _ := session.GetRecord(session_id)
 	*/
 	log.Printf("%s\n", x.SessionId())
-	log.Printf("%v\n", x.SessionRec)
+	host, nerr := xenapi.Host.GetRecord(x.sessionRef, x.sessionRec.ThisHost)
+	if nerr != nil {
+		panic(nerr)
+		return
+	}
+	log.Printf("%v\n", host)
 
 	if err := x.Session.Logout(); err != nil {
 		log.Print(err)
