@@ -23,6 +23,9 @@ var USERNAME1_FLAG = flag.String("username1", "", "the username of the host1 (e.
 var PASSWORD1_FLAG = flag.String("password1", "", "the password of the host1")
 */
 
+type XenInterface interface {
+
+}
 
 type SammXen struct {
 	verifySsl bool
@@ -63,6 +66,10 @@ func (self SammXen) GetUpdatesRrd(hostUuid string) ([]byte, error) {
 	return json.Marshal([]string{})
 }
 
+func (self SammXen) UpdateObjects() {
+	return
+}
+
 var session *xenapi.Session
 
 func main() {
@@ -72,30 +79,13 @@ func main() {
 		panic(err)
 		return
 	}
-	/*
-	session = xenapi.NewSession(&xenapi.ClientOpts{
-		URL: "http://" + *HOST_FLAG,
-		Headers: map[string]string{
-			"User-Agent": "XS SDK for Go - Examples v1.0",
-		},
-	})
-	session_id , err := session.LoginWithPassword(*USERNAME_FLAG, *PASSWORD_FLAG, "1.0", "Go sdk samples")
-	if err != nil {
-		panic(err)
-		return
-	}
-	log.Print("api version: ", session.APIVersion)
-	log.Print("xapi rpm version: ", session.XAPIVersion)
-	rec, _ := session.GetRecord(session_id)
-	*/
 	log.Printf("%s\n", x.SessionId())
-	allHosts, nerr := xenapi.Host.GetAll(x.Session)
+	allHosts, nerr := xenapi.Host.GetAllRecords(x.Session)
 	if nerr != nil {
 		panic(nerr)
 		return
 	}
-	for _, hostRef := range(allHosts) {
-		host, err := xenapi.Host.GetRecord(x.Session, hostRef)
+	for _, host := range(allHosts) {
 		if err != nil {
 			log.Print(err)
 		} else {
