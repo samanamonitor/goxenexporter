@@ -1,0 +1,21 @@
+services:
+  exporter:
+    build: .
+    command: [ "/bin/bash" ]
+    hostname: build
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./src:/go/src
+    ports:
+      - 5000:5000
+  prometheus:
+    image: prom/prometheus:latest
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --log.level=error
+      - --storage.tsdb.path=/prometheus
+    volumes:
+      - ./env/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
