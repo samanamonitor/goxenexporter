@@ -88,12 +88,19 @@ func main() {
 	rec, _ := session.GetRecord(session_id)
 	*/
 	log.Printf("%s\n", x.SessionId())
-	host, nerr := xenapi.Host.GetRecord(x.Session, x.SessionRec.ThisHost)
+	allHosts, nerr := xenapi.Host.GetAll(x.Session)
 	if nerr != nil {
 		panic(nerr)
 		return
 	}
-	log.Printf("%v\n", host)
+	for _, hostRef := range(allHosts) {
+		host, err := xenapi.Host.GetRecord(x.Session, hostRef)
+		if err != nil {
+			log.Print(err)
+		} else {
+			log.Printf("%v\n", host)
+		}
+	}
 
 	if err := x.Session.Logout(); err != nil {
 		log.Print(err)
