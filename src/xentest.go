@@ -98,7 +98,7 @@ func main() {
 		if err != nil {
 			log.Print(err)
 		} else {
-			log.Printf("%s\n", host.UUID)
+			Printf("%s\n", host.UUID)
 		}
 	}
 
